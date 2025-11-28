@@ -20,10 +20,17 @@ class AzampayServiceProvider extends PackageServiceProvider
             ->hasConfigFile();
     }
 
-    public function packageRegistered()
-    {
-        $this->app->bind('azampay', function () {
-            return new AzampayService();
-        });
-    }
+public function packageRegistered()
+{
+    // bind the class itself so the facade resolving by class name works
+    $this->app->bind(\Alphaolomi\Azampay\AzampayService::class, function () {
+        return new \Alphaolomi\Azampay\AzampayService();
+    });
+
+    // also bind short key for backwards compat (optional)
+    $this->app->bind('azampay', function ($app) {
+        return $app->make(\Alphaolomi\Azampay\AzampayService::class);
+    });
+}
+
 }
